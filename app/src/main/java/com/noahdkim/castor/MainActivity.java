@@ -29,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
     static int numNote = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         requestPermissions();
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,7 +55,12 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout noteList = (LinearLayout) findViewById(R.id.Menu);
         noteList.removeAllViews();
         final String[] noteTitles = getNotes();
-        numNote = noteTitles.length;
+        if(noteTitles==null){
+            numNote=0;
+        }
+        else {
+            numNote = noteTitles.length;
+        }
         final Context context = this;
         final Intent intent = new Intent(MainActivity.this, Note.class);
         for(int i = 0; i<numNote; i++){
@@ -118,6 +124,9 @@ public class MainActivity extends AppCompatActivity {
     }
     public void requestPermissions(){
         ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                1);
+        ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 1);
     }
@@ -125,23 +134,30 @@ public class MainActivity extends AppCompatActivity {
     public String[] getNotes(){
         File sdCard = Environment.getExternalStorageDirectory();
         File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
-        File[] listOfNotes =  directory.listFiles();
-        int noteCount = listOfNotes.length;
-        String[] returnList = new String[noteCount];
-        for(int i = 0; i<listOfNotes.length; i++){
-            if (listOfNotes[i].isFile()) {
-                String fname = listOfNotes[i].getName();
-                int pos = fname.lastIndexOf(".");
-                if (pos > 0) {
-                    fname = fname.substring(0, pos);
+        if(directory.listFiles()!=null) {
+            File[] listOfNotes = directory.listFiles();
+            int noteCount = listOfNotes.length;
+            String[] returnList = new String[noteCount];
+            for (int i = 0; i < listOfNotes.length; i++) {
+                if (listOfNotes[i].isFile()) {
+                    String fname = listOfNotes[i].getName();
+                    int pos = fname.lastIndexOf(".");
+                    if (pos > 0) {
+                        fname = fname.substring(0, pos);
+                    }
+                    returnList[i] = fname;
+                    System.out.println("File " + listOfNotes[i].getName());
+                } else if (listOfNotes[i].isDirectory()) {
+                    returnList[i] = listOfNotes[i].getName();
                 }
-                returnList[i] = fname;
-                System.out.println("File " + listOfNotes[i].getName());
-            } else if (listOfNotes[i].isDirectory()) {
-                returnList[i] = listOfNotes[i].getName();
             }
+            return returnList;
         }
-        return returnList;
+        else{
+            return null;
+        }
+
+
     }
 
 
