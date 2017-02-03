@@ -3,9 +3,12 @@ package com.noahdkim.castor;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 import java.io.BufferedReader;
@@ -40,9 +43,20 @@ public class Note extends AppCompatActivity {
             editBody = (EditText) findViewById(R.id.body);
             editBody.setText(noteBody);
         }
+
+        final Intent startFlashcard = new Intent(Note.this, Flashcard.class);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.flashcard);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startFlashcard.putExtra("title",initialTitle);
+                startActivity(startFlashcard);
+            }
+        });
     }
 
-    protected void onStop() {
+    protected void onPause(){
+        super.onPause();
         editBody = (EditText) findViewById(R.id.body);
         editTitle = (EditText) findViewById(R.id.title);
         String writeBody = editBody.getText().toString();
@@ -55,8 +69,9 @@ public class Note extends AppCompatActivity {
         else{
             Log.d("SAVE", "not writable");
         }
+    }
 
-
+    protected void onStop() {
         super.onStop();
     }
 
@@ -96,14 +111,18 @@ public class Note extends AppCompatActivity {
             }
 //Now create the file in the above directory and write the contents into it
             File file = new File(directory, initialTitle + ".txt");
+            File writeToFile = file;
             if(!title.equals(initialTitle)){
-                file.delete();
+
+                if(file.delete()){
+                    System.out.println(initialTitle+ " deleted "+ title);
+                }
                 Log.d("FILE", "rename");
-                file = new File(directory, title + ".txt");
+                writeToFile = new File(directory, title + ".txt");
 
             }
 
-            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(writeToFile);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
             osw.write(toWrite);
             osw.flush();

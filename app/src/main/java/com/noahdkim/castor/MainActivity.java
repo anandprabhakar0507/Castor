@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
     protected void onResume(){
         super.onResume();
+        System.out.println("Resume remake list");
         LinearLayout noteList = (LinearLayout) findViewById(R.id.Menu);
         noteList.removeAllViews();
         final String[] noteTitles = getNotes();
@@ -56,12 +58,25 @@ public class MainActivity extends AppCompatActivity {
         final Context context = this;
         final Intent intent = new Intent(MainActivity.this, Note.class);
         for(int i = 0; i<numNote; i++){
-            Button toAdd = new Button(this);
+            final Button toAdd = new Button(this);
             Toolbar.LayoutParams lp = new Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.WRAP_CONTENT);
             toAdd.setId(numNote);
             toAdd.setText(noteTitles[i]);
             System.out.println(noteTitles[i]);
             final int noteIndex = i;
+            toAdd.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    File sdCard = Environment.getExternalStorageDirectory();
+                    File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
+                    File file = new File(directory, noteTitles[noteIndex] + ".txt");
+                    file.delete();
+                    ViewGroup layout = (ViewGroup) toAdd.getParent();
+                    if(null!=layout) //for safety only  as you are doing onClick
+                        layout.removeView(toAdd);
+                    return true;
+                }
+            });
             toAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -70,8 +85,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+
             noteList.addView(toAdd,lp); // noteList is the container of the buttons
         }
+    }
+    protected void onPause(){
+
+        super.onPause();
+        System.out.println("On Pause");
     }
 
     @Override
