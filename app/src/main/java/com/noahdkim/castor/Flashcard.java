@@ -1,6 +1,7 @@
 package com.noahdkim.castor;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -8,9 +9,19 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TableRow;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -22,8 +33,18 @@ import java.io.InputStream;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.noahdkim.castor.R.id.center;
+
 public class Flashcard extends AppCompatActivity {
-    int index=0;
+    int index = 0;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,25 +60,54 @@ public class Flashcard extends AppCompatActivity {
         final String diction[] = noteBody.split(":|\n");
 
 
-        final Button flashArea = new Button(this);
+        for (int i = 0; i < (diction.length/2); i++) {
+            final Button flashArea = new Button(this);
+            flashArea.setText(diction[i*2]);
+            index = i;
 
-        flashArea.setText(diction[index]);
-        flashArea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            TableRow nextRow = new TableRow(this);
+            nextRow.setId(i);
+            RelativeLayout content_flashcard = (RelativeLayout) findViewById(R.id.content_flashcard);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
 
-                index = flashcardTap(diction, index);
-                flashArea.setText(diction[index]);
+            flashArea.setId(i+1);
+            if (i == 0) {
 
+                content_flashcard.addView(flashArea);
+            } else {
 
+                params.addRule(RelativeLayout.BELOW, i);
+                content_flashcard.addView(flashArea,params);
             }
-        });
-        RelativeLayout content_flashcard = (RelativeLayout) findViewById(R.id.content_flashcard);
-        content_flashcard.addView(flashArea);
+            flashArea.setOnClickListener(new View.OnClickListener() {
+
+                int touches = 0;
+                @Override
+                public void onClick(View view) {
+                    if(touches == 0){
+                        index = flashArea.getId()*2-1;
+                        touches++;
+                    }
+                    else{
+                        index = (flashArea.getId()*2)-2;
+                        touches--;
+                    }
+                    flashArea.setText(diction[index]);
+
+
+
+
+                }
+            });
+
+
+        }
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -67,9 +117,10 @@ public class Flashcard extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
-
-
 
 
     public static int countLines(String filename) throws IOException {
@@ -101,11 +152,12 @@ public class Flashcard extends AppCompatActivity {
         }
         return false;
     }
-    private String readFromSDFile(String title){
+
+    private String readFromSDFile(String title) {
 
         File sdCard = Environment.getExternalStorageDirectory();
-        File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
-        File file = new File(directory,title+".txt");
+        File directory = new File(sdCard.getAbsolutePath() + "/MyFiles");
+        File file = new File(directory, title + ".txt");
         System.out.println(file.toString());
         StringBuilder text = new StringBuilder();
 
@@ -115,24 +167,60 @@ public class Flashcard extends AppCompatActivity {
             while ((line = br.readLine()) != null) {
                 text.append(line);
                 text.append('\n');
-                System.out.println("text toString"+text.toString());
+                System.out.println("text toString" + text.toString());
             }
             br.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             //You'll need to add proper error handling here
         }
         return text.toString();
     }
-    private int flashcardTap(String[] diction, int currentInd){
-        if(currentInd%2==0){
-            return currentInd+1;
-        }
-        else{
-            Random rand = new Random();
 
-            int  n = rand.nextInt(diction.length/2);
-            return n*2;
+    private int flashcardTap(String[] diction, int currentInd) {
+        if (currentInd % 2 == 0) {
+            return currentInd + 1;
+        } else {
+//            Random rand = new Random();
+//
+//            int  n = rand.nextInt(diction.length/2);
+//            return n*2;
+            return currentInd - 1;
         }
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Flashcard Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }

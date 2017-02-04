@@ -35,8 +35,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/body"
-        android:minHeight="400dp"
-        android:inputType="textAutoCorrect|textAutoComplete" />
+        android:minHeight="400dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
