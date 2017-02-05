@@ -39,7 +39,7 @@ public class Note extends AppCompatActivity {
         editTitle.setText(title);
         if(isExternalStorageReadable()){
             String noteBody = readFromSDFile(title);
-            System.out.println("note body:" + noteBody);
+
             editBody = (EditText) findViewById(R.id.body);
             editBody.setText(noteBody);
         }
@@ -61,14 +61,12 @@ public class Note extends AppCompatActivity {
         editTitle = (EditText) findViewById(R.id.title);
         String writeBody = editBody.getText().toString();
         String finalTitle = editTitle.getText().toString();
-        Log.d("SAVE", writeBody);
+
         if(isExternalStorageWritable()) {
-            Log.d("SAVE", "writable");
+
             writeToSDFile(finalTitle, writeBody);
         }
-        else{
-            Log.d("SAVE", "not writable");
-        }
+
     }
 
     protected void onStop() {
@@ -102,22 +100,16 @@ public class Note extends AppCompatActivity {
             File sdCard = Environment.getExternalStorageDirectory();
             File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
 
-            if(directory.exists()) {
-                Log.d("FILE", "found directory");
-            }
-            else{
-                directory.mkdirs();
-                Log.d("FILE", "directory not found");
-            }
+
 //Now create the file in the above directory and write the contents into it
             File file = new File(directory, initialTitle + ".txt");
             File writeToFile = file;
             if(!title.equals(initialTitle)){
 
-                if(file.delete()){
-                    System.out.println(initialTitle+ " deleted "+ title);
-                }
-                Log.d("FILE", "rename");
+                file.delete();
+
+
+
                 writeToFile = new File(directory, title + ".txt");
 
             }
@@ -129,7 +121,7 @@ public class Note extends AppCompatActivity {
             osw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.d("FILE", "not found");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -140,7 +132,7 @@ public class Note extends AppCompatActivity {
         File sdCard = Environment.getExternalStorageDirectory();
         File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
         File file = new File(directory,title+".txt");
-        System.out.println(file.toString());
+
         StringBuilder text = new StringBuilder();
 
         try {
@@ -149,7 +141,7 @@ public class Note extends AppCompatActivity {
             while ((line = br.readLine()) != null) {
                 text.append(line);
                 text.append('\n');
-                System.out.println("text toString"+text.toString());
+
             }
             br.close();
         }

@@ -107,16 +107,7 @@ public class Flashcard extends AppCompatActivity {
         }
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -158,7 +149,7 @@ public class Flashcard extends AppCompatActivity {
         File sdCard = Environment.getExternalStorageDirectory();
         File directory = new File(sdCard.getAbsolutePath() + "/MyFiles");
         File file = new File(directory, title + ".txt");
-        System.out.println(file.toString());
+
         StringBuilder text = new StringBuilder();
 
         try {
@@ -167,7 +158,7 @@ public class Flashcard extends AppCompatActivity {
             while ((line = br.readLine()) != null) {
                 text.append(line);
                 text.append('\n');
-                System.out.println("text toString" + text.toString());
+
             }
             br.close();
         } catch (IOException e) {

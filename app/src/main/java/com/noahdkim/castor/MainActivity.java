@@ -12,7 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     }
     protected void onResume(){
         super.onResume();
-        System.out.println("Resume remake list");
+
         LinearLayout noteList = (LinearLayout) findViewById(R.id.Menu);
         noteList.removeAllViews();
         final String[] noteTitles = getNotes();
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             Toolbar.LayoutParams lp = new Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.WRAP_CONTENT);
             toAdd.setId(numNote);
             toAdd.setText(noteTitles[i]);
-            System.out.println(noteTitles[i]);
+
             final int noteIndex = i;
             toAdd.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause(){
 
         super.onPause();
-        System.out.println("On Pause");
+
     }
 
     @Override
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                         fname = fname.substring(0, pos);
                     }
                     returnList[i] = fname;
-                    System.out.println("File " + listOfNotes[i].getName());
+
                 } else if (listOfNotes[i].isDirectory()) {
                     returnList[i] = listOfNotes[i].getName();
                 }
