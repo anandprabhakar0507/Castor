@@ -1,13 +1,10 @@
 package com.noahdkim.castor;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -17,10 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 
 
 public class Note extends AppCompatActivity {
@@ -49,7 +43,10 @@ public class Note extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startFlashcard.putExtra("title",initialTitle);
+                editTitle = (EditText) findViewById(R.id.title);
+
+                String finalTitle = editTitle.getText().toString();
+                startFlashcard.putExtra("title",finalTitle);
                 startActivity(startFlashcard);
             }
         });
@@ -57,15 +54,14 @@ public class Note extends AppCompatActivity {
 
     protected void onPause(){
         super.onPause();
+
         editBody = (EditText) findViewById(R.id.body);
         editTitle = (EditText) findViewById(R.id.title);
         String writeBody = editBody.getText().toString();
         String finalTitle = editTitle.getText().toString();
+        writeToSDFile(finalTitle, writeBody);
 
-        if(isExternalStorageWritable()) {
 
-            writeToSDFile(finalTitle, writeBody);
-        }
 
     }
 
@@ -98,8 +94,14 @@ public class Note extends AppCompatActivity {
         try {
             //This will get the SD Card directory and create a folder named MyFiles in it.
             File sdCard = Environment.getExternalStorageDirectory();
-            File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
 
+            File directory = new File (getFilesDir()+ "/MyFiles");
+
+            if(!directory.exists()){
+                directory.mkdirs();
+
+
+            }
 
 //Now create the file in the above directory and write the contents into it
             File file = new File(directory, initialTitle + ".txt");
@@ -107,15 +109,20 @@ public class Note extends AppCompatActivity {
             if(!title.equals(initialTitle)){
 
                 file.delete();
-
-
-
                 writeToFile = new File(directory, title + ".txt");
+                writeToFile.getParentFile().mkdirs();
+//                writeToFile.createNewFile();
+
 
             }
 
+
+
+
             FileOutputStream fOut = new FileOutputStream(writeToFile);
+
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
+
             osw.write(toWrite);
             osw.flush();
             osw.close();
@@ -126,11 +133,12 @@ public class Note extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
     }
     private String readFromSDFile(String title){
 
         File sdCard = Environment.getExternalStorageDirectory();
-        File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
+        File directory = new File (getFilesDir() + "/MyFiles");
         File file = new File(directory,title+".txt");
 
         StringBuilder text = new StringBuilder();

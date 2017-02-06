@@ -3,13 +3,10 @@ package com.noahdkim.castor;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 
@@ -74,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onLongClick(View v) {
                     File sdCard = Environment.getExternalStorageDirectory();
-                    File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
+                    File directory = new File (getFilesDir() + "/MyFiles");
                     File file = new File(directory, noteTitles[noteIndex] + ".txt");
                     file.delete();
                     ViewGroup layout = (ViewGroup) toAdd.getParent();
@@ -133,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String[] getNotes(){
         File sdCard = Environment.getExternalStorageDirectory();
-        File directory = new File (sdCard.getAbsolutePath() + "/MyFiles");
+        File directory = new File (getFilesDir() + "/MyFiles");
         if(directory.listFiles()!=null) {
             File[] listOfNotes = directory.listFiles();
             int noteCount = listOfNotes.length;

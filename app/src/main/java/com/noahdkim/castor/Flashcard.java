@@ -4,17 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
 
@@ -30,12 +24,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.noahdkim.castor.R.id.center;
 
 public class Flashcard extends AppCompatActivity {
     int index = 0;
@@ -147,7 +135,7 @@ public class Flashcard extends AppCompatActivity {
     private String readFromSDFile(String title) {
 
         File sdCard = Environment.getExternalStorageDirectory();
-        File directory = new File(sdCard.getAbsolutePath() + "/MyFiles");
+        File directory = new File(getFilesDir() + "/MyFiles");
         File file = new File(directory, title + ".txt");
 
         StringBuilder text = new StringBuilder();
@@ -163,6 +151,7 @@ public class Flashcard extends AppCompatActivity {
             br.close();
         } catch (IOException e) {
             //You'll need to add proper error handling here
+
         }
         return text.toString();
     }
